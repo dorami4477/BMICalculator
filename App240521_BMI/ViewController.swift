@@ -16,6 +16,9 @@ class ViewController: UIViewController {
     @IBOutlet var heightLabel: UILabel!
     @IBOutlet var heightTextField: UITextField!
     
+    @IBOutlet var nicknameLabel: UILabel!
+    @IBOutlet var nicknameTextField: UITextField!
+    
     @IBOutlet var weightLabel: UILabel!
     @IBOutlet var weightTextField: UITextField!
     
@@ -26,8 +29,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
+        configureTextField(nicknameTextField)
         configureTextField(heightTextField)
         configureTextField(weightTextField)
+
+        nicknameTextField.text = UserDefaults.standard.string(forKey: "userName")
         heightTextField.text = UserDefaults.standard.string(forKey: "userHeight")
         weightTextField.text = UserDefaults.standard.string(forKey: "userWeight")
     }
@@ -42,6 +48,7 @@ class ViewController: UIViewController {
         
         backImageView.image = UIImage(named: "image")
         backImageView.contentMode = .scaleAspectFill
+        nicknameLabel.text = "닉네임은?"
         heightLabel.text = "키가 어떻게 되시나요?"
         weightLabel.text = "몸무게는 어떻게 되시나요?"
  
@@ -80,10 +87,14 @@ class ViewController: UIViewController {
         
         guard let height = heightTextField.text else { return }
         guard let weight = weightTextField.text else { return }
+        guard let nickName = nicknameTextField.text else { return }
+        
         //공백제거 후 텍스트필드가 비었는지 확인
-        if !height.trimmingCharacters(in: .whitespaces).isEmpty && !weight.trimmingCharacters(in: .whitespaces).isEmpty {
+        if !height.trimmingCharacters(in: .whitespaces).isEmpty && !weight.trimmingCharacters(in: .whitespaces).isEmpty 
+        && !nickName.trimmingCharacters(in: .whitespaces).isEmpty{
             guard let height = Double(height) else { return }
             guard let weight = Double(weight) else { return }
+            
             
             //키가 범위안에 있는지 확인
             if height > 1 && height < 250{
@@ -93,6 +104,8 @@ class ViewController: UIViewController {
                     // bmi = 몸무게(kg) / 키(m) x 키(m)
                     let bmi = weight / (height/100 * height/100 )
                     presentAlert(title: "당신의 BMI는?", message: "\(String(format: "%.1f", bmi))입니다.")
+                    
+                    UserDefaults.standard.set(nickName, forKey: "userName")
                     UserDefaults.standard.set(height, forKey: "userHeight")
                     UserDefaults.standard.set(weight, forKey: "userWeight")
     
@@ -108,7 +121,7 @@ class ViewController: UIViewController {
 
         }else{
             //키나 몸무게가 입력되지 않았다면
-            presentAlert(title: "입력하세요.", message: "키와 몸무게를 입력하세요.")
+            presentAlert(title: "입력하세요.", message: "닉네임, 키, 몸무게를 입력하세요.")
         }
      
     }
